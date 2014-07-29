@@ -8,6 +8,14 @@ describe "Handler", ->
     if options.queuePort is undefined
       options.queuePort = false
 
+    options.storage =
+      original:
+        type: "local"
+        sourcePath: __dirname + "/storage/original"
+      thumbnail:
+        type: "local"
+        sourcePath: __dirname + "/storage/thumbnail"
+
     handler = new Handler
       options: options
       logger:

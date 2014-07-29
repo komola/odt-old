@@ -22,9 +22,21 @@ module.exports = (options = {}) =>
     instances: numCPUs
     handlerPort: 5000
     queuePort: 4900
+    storage: {}
 
   if options.instances < 1
     options.instances = 1
+
+  if not options.storage.original or not options.storage.thumbnail
+    logger.notice "No storage options configured! Please configure these options."
+    process.exit()
+
+  allowedStorageTypes = ["local"]
+
+  for type in ["original", "thumbnail"]
+    if options.storage[type].type not in allowedStorageTypes
+      logger.notice "Invalid storage type given: #{options.storage[type].type}"
+      process.exit()
 
   # Warn the user if he wants to spin up more instances than CPU cores available
   if options.instances > numCPUs

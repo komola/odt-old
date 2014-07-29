@@ -3,6 +3,8 @@ express = require "express"
 cluster = require "cluster"
 kue = require "kue"
 
+LocalStorage = require "./storage/local"
+
 class Handler
   constructor: (params) ->
     @options = params.options
@@ -22,6 +24,9 @@ class Handler
         cluster.fork()
 
     else
+      originalStorage = @initOriginalStorage()
+      thumbnailStorage = @initThumbnailStorage()
+
       # start the app
       @app = app = express()
 
@@ -52,6 +57,22 @@ class Handler
 
     @queueServer = kue.app.listen @options.queuePort
     kue.app.set "title", "ODT Handler Queue Interface"
+
+  initOriginalStorage: =>
+    instance = @_initStorage @options.storage.original
+    return instance
+
+  initThumbnailStorage: =>
+    instance = @_initStorage @options.storage.thumbnail
+    return instance
+
+  _initStorage: (options) =>
+    klass = switch options.type
+      when "local" then LocalStorage
+      else LocalStorage
+
+    instance = new klass _.omit(options, "type")
+    return instance
 
   shutdown: (callback) =>
     @server.close()
