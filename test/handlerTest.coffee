@@ -58,6 +58,4 @@ describe "Handler", ->
         agent.get("http://localhost:5000/v1/400/300/foo.jpg").end (res) =>
           res.ok.should.equal true
 
-          console.log res.text
-
           done()

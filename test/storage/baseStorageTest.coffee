@@ -1,4 +1,4 @@
-BaseStorage = require "../app/storage/base"
+BaseStorage = require "../../app/storage/base"
 storage = new BaseStorage
 
 describe "BaseStorage", ->
