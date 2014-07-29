@@ -11,8 +11,8 @@ class Handler
     @logger = params.logger
 
   start: (callback) =>
-    @setupServer()
     @setupQueue()
+    @setupServer()
 
   setupServer: =>
     if cluster.isMaster and process.env.NODE_ENV isnt "test"
@@ -24,8 +24,8 @@ class Handler
         cluster.fork()
 
     else
-      originalStorage = @initOriginalStorage()
-      thumbnailStorage = @initThumbnailStorage()
+      @originalStorage = originalStorage = @initOriginalStorage()
+      @thumbnailStorage = thumbnailStorage = @initThumbnailStorage()
 
       # start the app
       @app = app = express()
@@ -34,6 +34,9 @@ class Handler
       app.use (req, res, next) =>
         req.options = @options
         req.logger = @logger
+        req.originalStorage = originalStorage
+        req.thumbnailStorage = thumbnailStorage
+        req.queue = @queue
 
         next()
 
@@ -46,9 +49,9 @@ class Handler
         @logger.info "Starting handler instances on ports", @options.handlerPort
 
   setupQueue: =>
-    return if cluster.isWorker or process.env.NODE_ENV isnt "test"
+    @queue = kue.createQueue()
 
-    kue.createQueue()
+    return if cluster.isWorker or process.env.NODE_ENV isnt "test"
 
     @startQueueInterface()
 

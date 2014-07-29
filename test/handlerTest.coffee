@@ -52,8 +52,9 @@ describe "Handler", ->
           return done new Error "queue seems to be running"
 
   describe "running server", ->
-    beforeEach =>
+    beforeEach (done) =>
       startHandler(handlerPort: 5000)
+      handler.queue.client.flushdb done
 
     describe "GET /status", ->
       it "should return status", (done) ->
@@ -61,9 +62,36 @@ describe "Handler", ->
           res.body.status.should.equal "running"
           done()
 
-    describe "GET /v1/:width/:height/:path", (done) ->
-      it "should respond to requests", (done) ->
-        agent.get("http://localhost:5000/v1/400/300/foo.jpg").end (res) =>
-          res.ok.should.equal true
+    describe "v1", ->
+      describe "GET /v1/:width/:height/:path", (done) ->
+        it "should queue the thumbnail generation", (done) ->
+          agent.get("http://localhost:5000/v1/400/300/image.jpg").end (res) =>
 
-          done()
+          fun = =>
+            queue = handler.queue
+            queue.inactive (err, jobs) =>
+              jobs.length.should.equal 1
+
+              done()
+
+          setTimeout fun, 200
+
+        it "should return 404 if file does not exist", (done) ->
+          agent.get("http://localhost:5000/v1/400/300/foo.jpg").end (res) =>
+            res.status.should.equal 404
+
+            done()
+
+        it "should return pre-generated thumbnails", (done) ->
+          hash = handler.thumbnailStorage.calculateHash "image.jpg", width: 400, height: 300
+
+          handler.originalStorage.createReadStream "image.jpg", (err, readStream) =>
+            handler.thumbnailStorage.createWriteStream hash, (err, writeStream) =>
+              readStream.pipe writeStream
+
+              writeStream.on "close", =>
+                agent.get("http://localhost:5000/v1/400/300/image.jpg").end (res) =>
+                  res.ok.should.equal true
+
+                  require("fs").unlinkSync handler.thumbnailStorage.options.sourcePath + "/#{hash}"
+                  done()
