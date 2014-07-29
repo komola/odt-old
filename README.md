@@ -1,4 +1,4 @@
-odt
+odt ![Build Status](https://travis-ci.org/komola/odt.svg)
 ===
 
 On Demand Thumbnail generator

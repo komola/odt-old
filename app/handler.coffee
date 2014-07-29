@@ -25,8 +25,17 @@ class Handler
       # start the app
       @app = app = express()
 
+      # pass along the options and logger
+      app.use (req, res, next) =>
+        req.options = @options
+        req.logger = @logger
+
+        next()
+
       app.get "/status", (req, res) =>
         res.json status: "running"
+
+      app.use "/v1", require("./routes/v1/serve")
 
       @server = server = app.listen @options.handlerPort, =>
         @logger.info "Starting handler instances on ports", @options.handlerPort

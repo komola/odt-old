@@ -52,3 +52,12 @@ describe "Handler", ->
         agent.get("http://localhost:5000/status").end (res) =>
           res.body.status.should.equal "running"
           done()
+
+    describe "GET /v1/:width/:height/:path", (done) ->
+      it "should respond to requests", (done) ->
+        agent.get("http://localhost:5000/v1/400/300/foo.jpg").end (res) =>
+          res.ok.should.equal true
+
+          console.log res.text
+
+          done()
