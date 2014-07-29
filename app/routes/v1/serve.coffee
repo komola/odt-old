@@ -7,6 +7,8 @@ router.get "/:width/:height/:path", (req, res, next) =>
   path = req.params.path
   additionalParameters = _.omit req.params, "path"
 
+  hash = null
+
   async.waterfall [
     (cb) =>
       req.originalStorage.exists path, (err, exists) =>
@@ -59,7 +61,7 @@ router.get "/:width/:height/:path", (req, res, next) =>
         return cb err if err
 
         # thumbnail still does not exist!
-        return cb() unless exists
+        return cb "creation_failed" unless exists
 
         # create a read stream and serve the file
         req.thumbnailStorage.createReadStream hash, (err, stream) =>

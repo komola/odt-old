@@ -2,12 +2,10 @@ var program = require("commander");
 
 program
   .version("0.0.1")
-  .option('-i, --instances [instance number]', 'Number of handler instances. Default: Number of CPU cores', parseInt)
-  .option('-p, --port [port]', 'Handler port. Default: 5000', parseInt)
-  .option('-w, --queue-port [interface port]', 'Queue interface port. Set to false to disable interface. Default: 4900')
+  .option('-i, --instances [instance number]', 'Number of worker instances. Default: Number of CPU cores', parseInt)
   .option('--original-storage-type <type>', 'Select original storage type.')
   .option('--original-storage-source-path <source>', 'Set original storage source path')
-  .option('--thumbnail-storage-type [type]', 'Select thumbnail storage type.')
+  .option('--thumbnail-storage-type [type]', 'Select thumbnail storage type. If not passed, will use the same as original storage.')
   .option('--thumbnail-storage-source-path [source]', 'Set thumbnail storage source path')
   .parse(process.argv)
   ;
@@ -38,6 +36,8 @@ if (program.thumbnailStorageType === 'local') {
     sourcePath: program.thumbnailStorageSourcePath
   };
 }
+
+options.isWorker = true;
 
 require("coffee-script/register");
 require("./app/server")(options);

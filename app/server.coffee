@@ -2,6 +2,7 @@ _ = require "lodash"
 winston = require "winston"
 numCPUs = require("os").cpus().length
 Handler = require "./handler"
+Worker = require "./worker"
 
 module.exports = (options = {}) =>
   # init logging
@@ -42,7 +43,9 @@ module.exports = (options = {}) =>
   if options.instances > numCPUs
     logger.notice "You want to start #{options.instances} instances, but only have #{numCPUs} CPU cores available. Consider decreasing the number of instances you want to run."
 
-  handler = new Handler
+  klass = if options.isWorker then Worker else Handler
+
+  handler = new klass
     options: options
     logger: logger
 

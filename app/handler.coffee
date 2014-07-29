@@ -44,7 +44,7 @@ class Handler extends ODT
 
   startQueueInterface: =>
     return if @options.queuePort is false
-    return if cluster.isWorker or process.env.NODE_ENV isnt "test"
+    return if cluster.isWorker
 
     @queueServer = kue.app.listen @options.queuePort
     kue.app.set "title", "ODT Handler Queue Interface"
