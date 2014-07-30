@@ -9,10 +9,14 @@ router.get "/:width/:height/:path", (req, res, next) =>
 
   hash = null
 
+  req.logger.debug "requesting image", req.params
+
   async.waterfall [
     (cb) =>
       req.originalStorage.exists path, (err, exists) =>
         return cb() if exists
+
+        req.logger.info "could not find image in original storage"
 
         res.status(404).end()
 
@@ -21,14 +25,20 @@ router.get "/:width/:height/:path", (req, res, next) =>
     (cb) =>
       hash = req.thumbnailStorage.calculateHash path, additionalParameters
 
+      req.logger.debug "calculated hash", hash: hash
+
       return cb null, hash
 
     (hash, cb) =>
       req.thumbnailStorage.exists hash, (err, exists) =>
         return cb err if err
 
+        req.logger.debug "check if thumbnail exists", exists: exists
+
         # create the thumbnail in case the hash does not exist
         return cb() unless exists
+
+        req.logger.debug "thumbnail exists. Stream to client"
 
         # create a read stream and serve the file
         req.thumbnailStorage.createReadStream hash, (err, stream) =>
@@ -40,6 +50,7 @@ router.get "/:width/:height/:path", (req, res, next) =>
           stream.on "error", cb
 
           stream.on "close", =>
+            req.logger.info "successfully served image to client"
             return cb "served"
 
     (cb) =>
@@ -47,7 +58,11 @@ router.get "/:width/:height/:path", (req, res, next) =>
         payload: req.params
         title: "Generate Thumbnail #{path} (#{req.params.width}x#{req.params.height})"
 
-      job = req.queue.create "thumbnail:generate", req.params
+      data.payload.hash = hash
+
+      job = req.queue.create "thumbnail:generate", data
+
+      job.attempts(3)
 
       job.save()
 

@@ -26,6 +26,8 @@ class Worker extends ODT
         job.thumbnailStorage = @thumbnailStorage
         job.queue = @queue
 
+        require("./jobs/generate_thumbnail")(job, done)
+
         setTimeout done, 1000
 
     process.once "SIGTERM", (sig) =>
