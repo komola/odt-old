@@ -14,6 +14,8 @@ router.get "/:width/:height/:path", (req, res, next) =>
   async.waterfall [
     (cb) =>
       req.originalStorage.exists path, (err, exists) =>
+        req.logger.error err.message, err if err
+
         return cb() if exists
 
         req.logger.info "could not find image in original storage"
@@ -68,12 +70,15 @@ router.get "/:width/:height/:path", (req, res, next) =>
 
       job.on "failed", cb
       job.on "complete", (result) =>
+        req.logger.debug "job fired complete event", result
         return cb()
 
     # try to serve the just created thumbnail
     (cb) =>
       req.thumbnailStorage.exists hash, (err, exists) =>
         return cb err if err
+
+        req.logger.debug "thumbnailStorage contains file", exists: exists
 
         # thumbnail still does not exist!
         return cb "creation_failed" unless exists

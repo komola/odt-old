@@ -1,40 +1,27 @@
 BaseStorage = require "./base"
-pkgcloud = require("pkgcloud")
+SwiftClient = require "../lib/swift"
 
 class SwiftStorage extends BaseStorage
   constructor: (options) ->
     @options = options
 
-    @client = pkgcloud.storage.createClient
-      provider: "openstack"
+    console.log options
+
+    @client = new SwiftClient
+      user: options.username
+      pass: options.password
+      host: options.url
       container: options.container
-      username: options.username
-      password: options.password
-      authUrl: options.url + "/auth/v1.0/"
+
+    @client.init()
 
   exists: (filename, callback) =>
-    @client.getFile @options.container, filename, (err, file) =>
-      console.log err
-      console.log file
-
-      return callback err if err
-
-      return callback err, true
+    @client.exists filename, callback
 
   createReadStream: (filename, callback) =>
-    options =
-      container: @options.container
-      remote: filename
-
-    readStream = @client.download options
-
-    return callback null, readStream
+    @client.read filename, callback
 
   createWriteStream: (filename, callback) =>
-    options =
-      container: @options.container
-      remote: filename
+    @client.write filename, callback
 
-    writeStream = @client.upload options
-
-    return callback null, writeStream
+module.exports = SwiftStorage

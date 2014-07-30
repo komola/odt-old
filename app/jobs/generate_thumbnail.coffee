@@ -58,7 +58,7 @@ module.exports = (job, done) =>
         readStream = fs.createReadStream tmpThumbnailPath
         readStream.pipe writeStream
 
-        writeStream.on "close", cb
+        writeStream.on "end", cb
 
     # cleanup
     (cb) =>
@@ -66,7 +66,6 @@ module.exports = (job, done) =>
 
   ], (err) =>
     if err
-      job.logger.error err
-      job.log err
+      job.logger.error err.message, err
 
     return done err

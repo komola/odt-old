@@ -17,7 +17,7 @@ class Handler extends ODT
         cluster.fork()
 
       cluster.on "exit", (worker) =>
-        logger.error "Worker #{worker.id} died"
+        @logger.error "Worker #{worker.id} died"
         cluster.fork()
 
     else

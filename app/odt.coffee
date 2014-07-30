@@ -3,6 +3,7 @@ cluster = require "cluster"
 kue = require "kue"
 
 LocalStorage = require "./storage/local"
+SwiftStorage = require "./storage/swift"
 
 class ODT
   constructor: (params) ->
@@ -31,6 +32,7 @@ class ODT
   _initStorage: (options) =>
     klass = switch options.type
       when "local" then LocalStorage
+      when "swift" then SwiftStorage
       else LocalStorage
 
     instance = new klass _.omit(options, "type")

@@ -15,6 +15,8 @@ program
 
   .option('--thumbnail-storage-type [type]', 'Select thumbnail storage type.')
   .option('--thumbnail-storage-source-path [source]', 'Set thumbnail storage source path')
+
+  .option('--thumbnail-storage-container <container>', 'Set thumbnail storage container name')
   .option('--thumbnail-storage-username <username>', 'Set thumbnail storage username')
   .option('--thumbnail-storage-password <password>', 'Set thumbnail storage password')
   .option('--thumbnail-storage-url <url>', 'Set thumbnail storage url')

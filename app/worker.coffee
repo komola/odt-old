@@ -15,7 +15,7 @@ class Worker extends ODT
         cluster.fork()
 
       cluster.on "exit", (worker) =>
-        logger.error "Worker #{worker.id} died"
+        @logger.error "Worker #{worker.id} died"
         cluster.fork()
 
     else
@@ -27,8 +27,6 @@ class Worker extends ODT
         job.queue = @queue
 
         require("./jobs/generate_thumbnail")(job, done)
-
-        setTimeout done, 1000
 
     process.once "SIGTERM", (sig) =>
       @queue.shutdown (err) =>

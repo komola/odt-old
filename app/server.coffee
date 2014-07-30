@@ -32,7 +32,7 @@ module.exports = (options = {}) =>
     logger.notice "No storage options configured! Please configure these options."
     process.exit()
 
-  allowedStorageTypes = ["local"]
+  allowedStorageTypes = ["local", "swift"]
 
   for type in ["original", "thumbnail"]
     if options.storage[type].type not in allowedStorageTypes
