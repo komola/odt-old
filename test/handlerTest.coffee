@@ -21,6 +21,7 @@ describe "Handler", ->
       logger:
         info: ->
         error: ->
+        debug: ->
 
     handler.start()
 
