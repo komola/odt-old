@@ -15,6 +15,8 @@ module.exports = (job, done) =>
   async.series [
     # download the file to a tmp file
     (cb) =>
+      job.logger.profile "[##{job.id}] read original"
+
       job.originalStorage.createReadStream data.path, (err, readStream) =>
         return cb err if err
 
@@ -24,11 +26,15 @@ module.exports = (job, done) =>
 
         readStream.pipe writeStream
 
-        writeStream.on "close", cb
+        writeStream.on "close", (err) =>
+          job.logger.profile "[##{job.id}] read original"
+          return cb err
 
     # generate the thumbnail
     (cb) =>
       tmpThumbnailPath = temp.path(affix: "odt")
+
+      job.logger.profile "[##{job.id}] generate thumbnail"
 
       execCommand = [
         "gm convert"
@@ -43,8 +49,6 @@ module.exports = (job, done) =>
 
       job.logger.debug "[##{job.id}] executing", execCommand
 
-      job.logger.profile "[##{job.id}] generate thumbnail"
-
       exec execCommand, (error, stdout, stderr) =>
         if error
           job.logger.error error.message
@@ -54,11 +58,14 @@ module.exports = (job, done) =>
 
     # store the thumbnail file in the storage
     (cb) =>
+      job.logger.profile "[##{job.id}] store thumbnail"
       job.thumbnailStorage.createWriteStream data.hash, (err, writeStream) =>
         readStream = fs.createReadStream tmpThumbnailPath
         readStream.pipe writeStream
 
-        writeStream.on "end", cb
+        writeStream.on "close", (err) =>
+          job.logger.profile "[##{job.id}] store thumbnail"
+          return cb err
 
     # cleanup
     (cb) =>

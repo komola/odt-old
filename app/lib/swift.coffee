@@ -59,7 +59,12 @@ class SwiftClient
       .set("x-auth-token", @passbase64)
       .on "error", ->
         console.log "Error", arguments
+
     stream = request
+
+    request.on "end", (err) =>
+      request.emit "close", err
+
     callback null, stream
 
   exists: (name, callback) =>
