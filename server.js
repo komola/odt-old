@@ -1,10 +1,15 @@
 var program = require("commander");
+var version = require("./package.json").version;
+var _ = require("lodash");
+var path = require("path");
 
 program
-  .version("0.0.1")
+  .version(version)
   .option('-i, --instances [instance number]', 'Number of handler instances. Default: Number of CPU cores', parseInt)
   .option('-p, --port [port]', 'Handler port. Default: 5000', parseInt)
   .option('-w, --queue-port [interface port]', 'Queue interface port. Set to false to disable interface. Default: 4900')
+  .option('-c, --config <config file>', 'Specify a config file to load')
+
   .option('--original-storage-type <type>', 'Select original storage type.')
   .option('--original-storage-source-path <source>', 'Set original storage source path')
 
@@ -21,6 +26,14 @@ program
   .option('--thumbnail-storage-password <password>', 'Set thumbnail storage password')
   .option('--thumbnail-storage-url <url>', 'Set thumbnail storage url')
   .parse(process.argv);
+
+if (program.config) {
+  program.config = path.resolve(program.config);
+  config = require(program.config);
+
+  _.extend(program, config);
+}
+
 
 var options = {
   instances: program.instances,

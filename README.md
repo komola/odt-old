@@ -20,6 +20,7 @@ $ ./bin/odt --help
     -i, --instances [instance number]          Number of handler instances. Default: Number of CPU cores
     -p, --port [port]                          Handler port. Default: 5000
     -w, --queue-port [interface port]          Queue interface port. Set to false to disable interface. Default: 4900
+    -c, --config <config file>                 Specify a config file to load
     --original-storage-type <type>             Select original storage type.
     --original-storage-source-path <source>    Set original storage source path
     --original-storage-container <container>   Set original storage container name
@@ -46,6 +47,7 @@ $ ./bin/odt-worker --help
     -h, --help                                 output usage information
     -V, --version                              output the version number
     -i, --instances [instance number]          Number of worker instances. Default: Number of CPU cores
+    -c, --config <config file>                 Specify a config file to load
     --original-storage-type <type>             Select original storage type.
     --original-storage-source-path <source>    Set original storage source path
     --original-storage-container <container>   Set original storage container name

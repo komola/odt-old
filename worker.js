@@ -1,8 +1,13 @@
 var program = require("commander");
+var version = require("./package.json").version;
+var _ = require("lodash");
+var path = require("path");
 
 program
-  .version("0.0.1")
+  .version(version)
   .option('-i, --instances [instance number]', 'Number of worker instances. Default: Number of CPU cores', parseInt)
+  .option('-c, --config <config file>', 'Specify a config file to load')
+
   .option('--original-storage-type <type>', 'Select original storage type.')
   .option('--original-storage-source-path <source>', 'Set original storage source path')
   .option('--original-storage-container <container>', 'Set original storage container name')
@@ -19,6 +24,13 @@ program
   .option('--thumbnail-storage-url <url>', 'Set thumbnail storage url')
   .parse(process.argv)
   ;
+
+if (program.config) {
+  program.config = path.resolve(program.config);
+  config = require(program.config);
+
+  _.extend(program, config);
+}
 
 var options = {
   instances: program.instances,

@@ -1,0 +1,14 @@
+{
+  "instances": 1,
+  "originalStorageType": "swift",
+  "originalStorageContainer": "images",
+  "originalStorageUsername": "user",
+  "originalStoragePassword": "password",
+  "originalStorageUrl": "https://cdn.domain.tld",
+
+  "thumbnailStorageType": "swift",
+  "thumbnailStorageContainer": "thumbnails",
+  "thumbnailStorageUsername": "user",
+  "thumbnailStoragePassword": "password",
+  "thumbnailStorageUrl": "https://cdn.domain.tld"
+}

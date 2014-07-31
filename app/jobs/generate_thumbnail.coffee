@@ -53,7 +53,7 @@ module.exports = (job, done) =>
 
       execCommand = [
         "gm convert"
-        # "-auto-orient"
+        "-auto-orient"
         "-size #{data.width}x#{data.height}"
         "-quality 100"
         "-resize #{data.width}x#{data.height}"
