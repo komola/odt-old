@@ -43,3 +43,29 @@ $ ./bin/odt-worker --help
     --thumbnail-storage-type [type]           Select thumbnail storage type. If not passed, will use the same as original storage.
     --thumbnail-storage-source-path [source]  Set thumbnail storage source path
 ```
+
+## Handler endpoints
+
+When started, you can access images on the handler by requesting this url:
+
+`http://localhost:5000/v1/400/300/image.jpg`
+
+### Adding filters
+
+You can define filters that should be added on top of the image. These filters
+can be things like
+
+* watermarks
+
+The url for this type of requests is:
+
+`http://localhost:5000/v1/400/300/filters:watermark(logo.png, 0, center)/image.jpg`
+
+## Available filters
+
+### Watermark
+Valid parameters are:
+
+* `watermark(filename, x, y, opacity)`
+* `watermark(filename, opacity, tile)` tile the watermark over the image
+* `watermark(filename, opacity, cover)` scale the watermark to cover the whole image

@@ -101,3 +101,27 @@ describe "Handler", ->
 
                   require("fs").unlinkSync handler.thumbnailStorage.options.sourcePath + "/#{hash}"
                   done()
+
+      describe "GET /v1/:width/:height/:parameters/:path", (done) ->
+        it "should queue the thumbnail generation", (done) ->
+          agent.get("http://localhost:5000/v1/400/300/filters:watermark(watermark.jpg,0,0,0)/image.jpg").end (res) =>
+
+          fun = =>
+            queue = handler.queue
+            queue.inactive (err, jobs) =>
+              jobs.length.should.equal 1
+
+              require("kue").Job.get jobs[0], (err, job) =>
+                job.data.payload.width.should.equal "400"
+                job.data.payload.height.should.equal "300"
+                job.data.payload.filters.length.should.equal 1
+                job.data.payload.filters[0].type.should.equal "watermark"
+                job.data.payload.filters[0].file.should.equal "watermark.jpg"
+                job.data.payload.filters[0].x.should.equal 0
+                job.data.payload.filters[0].y.should.equal 0
+                job.data.payload.filters[0].opacity.should.equal 0
+                job.data.payload.path.should.equal "image.jpg"
+
+                done()
+
+          setTimeout fun, 200

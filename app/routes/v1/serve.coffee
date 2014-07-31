@@ -2,10 +2,16 @@ express = require "express"
 router = express.Router()
 async = require "async"
 _ = require "lodash"
+parser = require "../../lib/parametersParser"
 
-router.get "/:width/:height/:path", (req, res, next) =>
+handleRequest = (req, res, next) =>
   path = req.params.path
   additionalParameters = _.omit req.params, "path"
+
+  # parse the URL parameters for filters etc. and add them to the parameters
+  if req.params.parameters
+    parameters = parser.parse(req.params.parameters)
+    _.extend req.params, parameters
 
   hash = null
 
@@ -102,5 +108,8 @@ router.get "/:width/:height/:path", (req, res, next) =>
     if err
       res.status(502).end()
       req.logger.error err
+
+router.get "/:width/:height/:parameters/:path", handleRequest
+router.get "/:width/:height/:path", handleRequest
 
 module.exports = router
