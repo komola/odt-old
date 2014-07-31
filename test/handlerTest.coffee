@@ -22,6 +22,7 @@ describe "Handler", ->
         info: ->
         error: ->
         debug: ->
+        profile: ->
 
     handler.start()
 
