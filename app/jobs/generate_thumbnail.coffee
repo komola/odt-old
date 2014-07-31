@@ -5,9 +5,9 @@ temp = require "temp"
 {exec} = require "child_process"
 
 module.exports = (job, done) =>
-  tmpFilePath = null
-  tmpThumbnailPath = null
+  tmpFiles = {}
 
+  job.logger.profile "[##{job.id}] generate thumbnail"
   job.logger.debug "[##{job.id}] generate thumbnail", job.data
 
   data = job.data.payload
@@ -15,52 +15,84 @@ module.exports = (job, done) =>
   async.series [
     # download the file to a tmp file
     (cb) =>
-      job.logger.profile "[##{job.id}] read original"
+      writeStreams = {}
+      files = [data.path]
 
-      job.originalStorage.createReadStream data.path, (err, readStream) =>
-        return cb err if err
+      if data.filters
+        for filter in data.filters when filter.type is "watermark"
+          files.push filter.file
 
-        writeStream = temp.createWriteStream("odt")
+      job.logger.profile "[##{job.id}] download #{files.length} images"
 
-        tmpFilePath = writeStream.path
+      download = (filename, done) =>
 
-        readStream.pipe writeStream
+        job.originalStorage.createReadStream filename, (err, readStream) =>
+          return done err if err
 
-        writeStream.on "close", (err) =>
-          job.logger.profile "[##{job.id}] read original"
-          return cb err
+          writeStream = temp.createWriteStream("odt")
+
+          tmpFiles[filename] = writeStream.path
+
+          readStream.pipe writeStream
+
+          writeStream.on "close", (err) =>
+            job.logger.profile "[##{job.id}] read file #{filename}"
+            return done err
+
+      async.each files, download, (err) =>
+        job.logger.profile "[##{job.id}] download #{files.length} images"
+        return cb err
 
     # generate the thumbnail
     (cb) =>
-      tmpThumbnailPath = temp.path(affix: "odt")
+      tmpFiles.thumbnail = temp.path(affix: "odt")
 
-      job.logger.profile "[##{job.id}] generate thumbnail"
+      job.logger.profile "[##{job.id}] execute gm"
+
+      commands = []
 
       execCommand = [
         "gm convert"
+        "-auto-orient"
         "-size #{data.width}x#{data.height}"
         "-quality 100"
         "-resize #{data.width}x#{data.height}"
         "+profile '*'"
         "-scale #{data.width}x#{data.height}"
         "-interlace Line"
-        "#{tmpFilePath} #{tmpThumbnailPath}"
-      ].join " "
+        "#{tmpFiles[data.path]} #{tmpFiles.thumbnail}"
+      ]
 
-      job.logger.debug "[##{job.id}] executing", execCommand
+      commands.push execCommand.join " "
 
-      exec execCommand, (error, stdout, stderr) =>
+      # add watermark info
+      if data.filters
+        for filter in data.filters when filter.type is "watermark"
+          commands.push [
+            "gm composite"
+            "-interlace Line"
+            "-quality 100%"
+            "-resize #{data.width}x#{data.height}"
+            "-gravity center"
+            "#{tmpFiles[filter.file]}"
+            "#{tmpFiles.thumbnail} #{tmpFiles.thumbnail}"
+          ].join " "
+
+      job.logger.debug "[##{job.id}] executing", commands
+
+      async.eachSeries commands, exec, (error) =>
+      # exec execCommand, (error, stdout, stderr) =>
         if error
           job.logger.error error.message
 
-        job.logger.profile "[##{job.id}] generate thumbnail"
+        job.logger.profile "[##{job.id}] execute gm"
         return cb error
 
     # store the thumbnail file in the storage
     (cb) =>
       job.logger.profile "[##{job.id}] store thumbnail"
       job.thumbnailStorage.createWriteStream data.hash, (err, writeStream) =>
-        readStream = fs.createReadStream tmpThumbnailPath
+        readStream = fs.createReadStream tmpFiles.thumbnail
         readStream.pipe writeStream
 
         writeStream.on "close", (err) =>
@@ -69,10 +101,13 @@ module.exports = (job, done) =>
 
     # cleanup
     (cb) =>
-      async.eachSeries [tmpFilePath, tmpThumbnailPath], fs.unlink, cb
+      files = _.values tmpFiles
+      async.eachSeries files, fs.unlink, cb
 
   ], (err) =>
     if err
       job.logger.error err.message, err
+
+    job.logger.profile "[##{job.id}] generate thumbnail"
 
     return done err
