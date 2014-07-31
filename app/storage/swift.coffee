@@ -5,8 +5,6 @@ class SwiftStorage extends BaseStorage
   constructor: (options) ->
     @options = options
 
-    console.log options
-
     @client = new SwiftClient
       user: options.username
       pass: options.password
