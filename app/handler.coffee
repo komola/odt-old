@@ -31,6 +31,7 @@ class Handler extends ODT
         req.originalStorage = @originalStorage
         req.thumbnailStorage = @thumbnailStorage
         req.queue = @queue
+        req.metrics = @metrics
 
         next()
 

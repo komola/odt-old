@@ -22,6 +22,11 @@ program
   .option('--thumbnail-storage-username <username>', 'Set thumbnail storage username')
   .option('--thumbnail-storage-password <password>', 'Set thumbnail storage password')
   .option('--thumbnail-storage-url <url>', 'Set thumbnail storage url')
+
+  .option('--statsd-host <host>', 'Set statsd host')
+  .option('--statsd-port <port>', 'Set statsd port. Default 8125')
+  .option('--statsd-prefix <prefix>', 'Set statsd prefix.')
+
   .parse(process.argv)
   ;
 
@@ -36,6 +41,9 @@ var options = {
   instances: program.instances,
   handlerPort: program.port,
   queuePort: program.queuePort,
+  statsdHost: program.statsdHost,
+  statsdPort: program.statsdPort,
+  statsdPrefix: program.statsdPrefix,
   storage: {}
 };
 

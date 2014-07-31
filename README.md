@@ -33,6 +33,9 @@ $ ./bin/odt --help
     --thumbnail-storage-username <username>    Set thumbnail storage username
     --thumbnail-storage-password <password>    Set thumbnail storage password
     --thumbnail-storage-url <url>              Set thumbnail storage url
+    --statsd-host <host>                       Set statsd host
+    --statsd-port <port>                       Set statsd port. Default 8125
+    --statsd-prefix <prefix>                   Set statsd prefix.
 ```
 
 ### Starting the worker
@@ -60,6 +63,9 @@ $ ./bin/odt-worker --help
     --thumbnail-storage-username <username>    Set thumbnail storage username
     --thumbnail-storage-password <password>    Set thumbnail storage password
     --thumbnail-storage-url <url>              Set thumbnail storage url
+    --statsd-host <host>                       Set statsd host
+    --statsd-port <port>                       Set statsd port. Default 8125
+    --statsd-prefix <prefix>                   Set statsd prefix.
 ```
 
 ## Handler endpoints

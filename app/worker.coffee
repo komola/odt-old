@@ -25,6 +25,7 @@ class Worker extends ODT
         job.originalStorage = @originalStorage
         job.thumbnailStorage = @thumbnailStorage
         job.queue = @queue
+        job.metrics = @metrics
 
         require("./jobs/generate_thumbnail")(job, done)
 

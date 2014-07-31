@@ -16,6 +16,10 @@ handleRequest = (req, res, next) =>
   hash = null
 
   req.logger.debug "requesting image", req.params
+  req.metrics.increment "thumbnail.request.attempted"
+
+  req.logger.profile "delivering thumbnail"
+  start = +new Date()
 
   async.waterfall [
     (cb) =>
@@ -23,6 +27,8 @@ handleRequest = (req, res, next) =>
         req.logger.error err.message, err if err
 
         return cb() if exists
+
+        req.metrics.increment "thumbnail.request.failure.not_found"
 
         req.logger.info "could not find image in original storage"
 
@@ -46,11 +52,15 @@ handleRequest = (req, res, next) =>
         # create the thumbnail in case the hash does not exist
         return cb() unless exists
 
+        req.metrics.increment "thumbnail.request.cached"
         req.logger.debug "thumbnail exists. Stream to client"
 
         # create a read stream and serve the file
         req.thumbnailStorage.createReadStream hash, (err, stream) =>
           return cb err if err
+
+          req.metrics.timing "thumbnail.delivery_time", +new Date() - start
+          req.logger.profile "delivering thumbnail"
 
           res.set "Content-Type", "image/jpeg"
 
@@ -68,6 +78,7 @@ handleRequest = (req, res, next) =>
 
       data.payload.hash = hash
 
+      req.metrics.increment "thumbnail.request.new"
       job = req.queue.create "thumbnail:generate", data
 
       job.attempts(3)
@@ -95,6 +106,7 @@ handleRequest = (req, res, next) =>
 
           res.set "Content-Type", "image/jpeg"
 
+          req.logger.profile "delivering thumbnail"
           stream.pipe res
           stream.on "error", cb
 
