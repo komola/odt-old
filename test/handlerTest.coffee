@@ -73,7 +73,12 @@ describe "Handler", ->
             queue.inactive (err, jobs) =>
               jobs.length.should.equal 1
 
-              done()
+              require("kue").Job.get jobs[0], (err, job) =>
+                job.data.payload.width.should.equal "400"
+                job.data.payload.height.should.equal "300"
+                job.data.payload.path.should.equal "image.jpg"
+
+                done()
 
           setTimeout fun, 200
 
