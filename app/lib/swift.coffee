@@ -138,15 +138,34 @@ class SwiftClient
       writeStream.on "response", (res) ->
         callback()
 
-  init: (cb) ->
-    agent.get(@originalhost+"/auth/v1.0/")
-      .set("X-Auth-User",@user)
-      .set("X-Auth-Key",@pass)
-      .end (err, res) =>
-        if not res?.ok and res.header["x-auth-token"] and res.header["x-storage-url"]
-          throw new Error "Could not authenticate"
+  init: (callback) ->
+    async.series [
+      (cb) =>
+        agent.get(@originalhost+"/auth/v1.0/")
+          .set("X-Auth-User",@user)
+          .set("X-Auth-Key",@pass)
+          .set("x-auth-token", @passbase64)
+          .end (err, res) =>
+            if not res?.ok and res.header["x-auth-token"] and res.header["x-storage-url"]
+              throw new Error "Could not authenticate"
 
-        @host = res.header["x-storage-url"]
+            @host = res.header["x-storage-url"]
 
-        cb() if cb
+            cb() if cb
+
+      (cb) =>
+        agent.put(@host+"/"+@container+"/")
+          .set("Authorization", "S3 "+@user+"\:"+@passhmac)
+          .set("x-auth-token", @passbase64)
+          .end (err, res) =>
+            unless res?.ok
+              console.log res.req._headers
+              console.error "Could not create container",
+                response: res.text
+                status: res.status
+
+              throw new Error "Could not create container"
+
+            cb()
+    ], callback
 module.exports = SwiftClient
