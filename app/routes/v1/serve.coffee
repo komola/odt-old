@@ -24,7 +24,7 @@ handleRequest = (req, res, next) =>
   async.waterfall [
     (cb) =>
       req.originalStorage.exists path, (err, exists) =>
-        if err.timeout
+        if err?.timeout
           req.metrics.increment "thumbnail.request.failure.timeout"
 
         req.logger.error err.message, err if err
@@ -36,7 +36,7 @@ handleRequest = (req, res, next) =>
 
         req.logger.info "could not find image in original storage"
 
-        res.status(404).end()
+        res.status(404).send("Not found")
 
         return cb "not_existing"
 
@@ -49,7 +49,7 @@ handleRequest = (req, res, next) =>
 
     (hash, cb) =>
       req.thumbnailStorage.exists hash, (err, exists) =>
-        if err.timeout
+        if err?.timeout
           req.metrics.increment "thumbnail.request.failure.timeout"
 
         return cb err if err
@@ -100,7 +100,7 @@ handleRequest = (req, res, next) =>
     # try to serve the just created thumbnail
     (cb) =>
       req.thumbnailStorage.exists hash, (err, exists) =>
-        if err.timeout
+        if err?.timeout
           req.metrics.increment "thumbnail.request.failure.timeout"
 
         return cb err if err
@@ -128,7 +128,7 @@ handleRequest = (req, res, next) =>
       err = null
 
     if err
-      res.status(502).end()
+      res.status(502).send("Internal error")
       req.logger.error err
 
 router.get "/:width/:height/:parameters/:path", handleRequest
