@@ -73,6 +73,7 @@ class SwiftClient
     agent.head(url)
       .set("Authorization", "S3 "+@user+"\:"+@passhmac)
       .set("x-auth-token", @passbase64)
+      .timeout(4000)
       .end (err, res) =>
         if err
           console.error "Error HEAD: #{url}",
@@ -80,6 +81,8 @@ class SwiftClient
             headers:
               "Authorization": "S3 "+@user+"\:"+@passhmac
               "x-auth-token": @passbase64
+
+          console.error err
 
           return callback err
 
@@ -146,7 +149,11 @@ class SwiftClient
           .set("X-Auth-Key",@pass)
           .set("x-auth-token", @passbase64)
           .end (err, res) =>
-            if not res?.ok and res.header["x-auth-token"] and res.header["x-storage-url"]
+            if err
+              console.error "Could not authenticate"
+              throw err
+
+            if not res?.ok and res?.header["x-auth-token"] and res?.header["x-storage-url"]
               throw new Error "Could not authenticate"
 
             @host = res.header["x-storage-url"]

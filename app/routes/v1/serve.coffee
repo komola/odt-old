@@ -24,6 +24,9 @@ handleRequest = (req, res, next) =>
   async.waterfall [
     (cb) =>
       req.originalStorage.exists path, (err, exists) =>
+        if err.timeout
+          req.metrics.increment "thumbnail.request.failure.timeout"
+
         req.logger.error err.message, err if err
 
         return cb() if exists
@@ -46,6 +49,9 @@ handleRequest = (req, res, next) =>
 
     (hash, cb) =>
       req.thumbnailStorage.exists hash, (err, exists) =>
+        if err.timeout
+          req.metrics.increment "thumbnail.request.failure.timeout"
+
         return cb err if err
 
         req.logger.debug "check if thumbnail exists", exists: exists
@@ -94,6 +100,9 @@ handleRequest = (req, res, next) =>
     # try to serve the just created thumbnail
     (cb) =>
       req.thumbnailStorage.exists hash, (err, exists) =>
+        if err.timeout
+          req.metrics.increment "thumbnail.request.failure.timeout"
+
         return cb err if err
 
         req.logger.debug "thumbnailStorage contains file", exists: exists
