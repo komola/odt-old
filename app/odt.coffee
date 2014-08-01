@@ -21,7 +21,12 @@ class ODT
     @thumbnailStorage = thumbnailStorage = @initThumbnailStorage()
 
   setupQueue: =>
-    @queue = kue.createQueue()
+    @queue = kue.createQueue
+      prefix: "odt"
+      redis:
+        port: @options.redisPort or 6379
+        host: @options.redisHost or "localhost"
+        auth: @options.redisAuth
 
   setupStatsd: =>
     if @options.statsdHost

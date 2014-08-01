@@ -27,6 +27,10 @@ program
   .option('--statsd-port <port>', 'Set statsd port. Default 8125')
   .option('--statsd-prefix <prefix>', 'Set statsd prefix.')
 
+  .option('--redis-host <host>', 'Set redis host. Default: localhost')
+  .option('--redis-port <port>', 'Set redis port. Default: 6379')
+  .option('--redis-auth <auth>', 'Set redis authentication password')
+
   .parse(process.argv)
   ;
 
@@ -44,6 +48,9 @@ var options = {
   statsdHost: program.statsdHost,
   statsdPort: program.statsdPort,
   statsdPrefix: program.statsdPrefix,
+  redisHost: program.redisHost,
+  redisPort: program.redisPort,
+  redisAuth: program.redisAuth,
   storage: {}
 };
 

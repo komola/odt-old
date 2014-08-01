@@ -36,6 +36,9 @@ $ ./bin/odt --help
     --statsd-host <host>                       Set statsd host
     --statsd-port <port>                       Set statsd port. Default 8125
     --statsd-prefix <prefix>                   Set statsd prefix.
+    --redis-host <host>                        Set redis host. Default: localhost
+    --redis-port <port>                        Set redis port. Default: 6379
+    --redis-auth <auth>                        Set redis authentication password
 ```
 
 ### Starting the worker
@@ -66,6 +69,9 @@ $ ./bin/odt-worker --help
     --statsd-host <host>                       Set statsd host
     --statsd-port <port>                       Set statsd port. Default 8125
     --statsd-prefix <prefix>                   Set statsd prefix.
+    --redis-host <host>                        Set redis host. Default: localhost
+    --redis-port <port>                        Set redis port. Default: 6379
+    --redis-auth <auth>                        Set redis authentication password
 ```
 
 ## Handler endpoints
