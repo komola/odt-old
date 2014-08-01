@@ -128,8 +128,12 @@ handleRequest = (req, res) =>
       err = null
 
     if err
-      res.status(502).send("Internal error")
       req.logger.error err
+
+      unless res.headerSent
+        res.status(502).send("Internal error")
+      else
+        res.end()
 
 router.get "/:width/:height/:parameters/:path", handleRequest
 router.get "/:width/:height/:path", handleRequest
