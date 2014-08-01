@@ -1,2 +1,17 @@
 #!/usr/bin/env node
-require("../server")
+var forever = require("forever-monitor");
+var path = require("path");
+
+var file = path.resolve(__dirname + '/../server.js');
+
+var child = new (forever.Monitor)(file, {
+  max: 3,
+  silent: false,
+  options: process.argv
+});
+
+child.on('exit', function() {
+  console.log('ODT has exited after 3 restarts');
+});
+
+child.start();
