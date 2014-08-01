@@ -130,7 +130,7 @@ handleRequest = (req, res) =>
     if err
       req.logger.error err
 
-      unless res.headerSent
+      unless res.headersSent
         res.status(502).send("Internal error")
       else
         res.end()
