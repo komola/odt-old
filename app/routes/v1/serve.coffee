@@ -4,7 +4,7 @@ async = require "async"
 _ = require "lodash"
 parser = require "../../lib/parametersParser"
 
-handleRequest = (req, res, next) =>
+handleRequest = (req, res) =>
   path = req.params.path
   additionalParameters = _.omit req.params, "path"
 

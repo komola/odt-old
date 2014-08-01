@@ -48,6 +48,7 @@ class SwiftClient
       request = agent.get(url)
         .set("Authorization", "S3 "+@user+"\:"+@passhmac)
         .set("x-auth-token", @passbase64)
+        .timeout(20000)
 
       return callback null, request
 
@@ -57,6 +58,7 @@ class SwiftClient
     request = agent.put(url)
       .set("Authorization", "S3 "+@user+"\:"+@passhmac)
       .set("x-auth-token", @passbase64)
+      .timeout(20000)
       .on "error", ->
         console.log "Error", arguments
 
@@ -99,6 +101,7 @@ class SwiftClient
     req = agent.head(url)
       .set("Authorization", "S3 "+@user+"\:"+@passhmac)
       .set("x-auth-token", @passbase64)
+      .timeout(4000)
       .on "error", (err) ->
         console.error "Authentication Error"
       .end (err, res)->

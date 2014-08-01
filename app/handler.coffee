@@ -40,6 +40,13 @@ class Handler extends ODT
 
       app.use "/v1", require("./routes/v1/serve")
 
+      # error handler
+      app.use (err, req, res, next) =>
+        @logger.error err.message, err
+
+        res.status 500
+        res.send "Unknown error occured"
+
       @server = server = app.listen @options.handlerPort, =>
         @logger.info "Starting handler instances on ports", @options.handlerPort
 
