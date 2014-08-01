@@ -29,6 +29,7 @@ handleRequest = (req, res, next) =>
         return cb() if exists
 
         req.metrics.increment "thumbnail.request.failure.not_found"
+        req.logger.profile "delivering thumbnail"
 
         req.logger.info "could not find image in original storage"
 
