@@ -77,15 +77,43 @@ module.exports = (job, done) =>
       # add watermark info
       if data.filters
         for filter in data.filters when filter.type is "watermark"
-          commands.push [
+          command = [
             "gm composite"
             "-interlace Line"
             "-quality 100%"
-            "-resize #{data.width}x#{data.height}"
-            "-gravity center"
+          ]
+
+          if filter.behavior is "tile"
+            command.push [
+              "-resize 100%"
+              "-dissolve #{filter.opacity}"
+              "-gravity center"
+              "-tile"
+            ].join " "
+
+          else if filter.behavior is "cover"
+            command.push [
+              "-compose Over"
+              "-dissolve #{filter.opacity}"
+              "-resize #{data.width}x#{data.height}"
+              "-gravity center"
+            ].join " "
+
+          else
+            command.push [
+              "-compose Over"
+              "-gravity SouthEast"
+              "-geometry +#{filter.x}+#{filter.y}"
+              "-dissolve #{filter.opacity}"
+              "-resize #{data.width}x#{data.height}"
+            ].join " "
+
+          command.push [
             "#{tmpFiles[filter.file]}"
             "#{tmpFiles.thumbnail} #{tmpFiles.thumbnail}"
           ].join " "
+
+          commands.push command.join " "
 
       job.logger.debug "[##{job.id}] executing", commands
 
