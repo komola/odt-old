@@ -20,7 +20,8 @@ ParametersParser =
       if attributes.length is 4
         [filter.file, filter.x, filter.y, filter.opacity] = attributes
 
-      else if attributes.length is 3 and attributes[2] in ["tile", "cover"]
+      # watermark(filename, opacity, behavior)
+      else if attributes.length is 3 and attributes[2] in ["tile", "cover", "center"]
         [filter.file, filter.opacity, filter.behavior] = attributes
 
       else

@@ -91,6 +91,13 @@ module.exports = (job, done) =>
               "-tile"
             ].join " "
 
+          else if filter.behavior is "center"
+            command.push [
+              "-compose Over"
+              "-dissolve #{filter.opacity}"
+              "-gravity center"
+            ].join " "
+
           else if filter.behavior is "cover"
             command.push [
               "-compose Over"

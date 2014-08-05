@@ -69,6 +69,20 @@ describe "Parameters Parser", ->
             }
           ]
 
+      it "should detect watermark(foo.jpg, 0, center)", ->
+        a = parser.parse("filters:watermark(foo.jpg, 0, center)")
+
+        a.should.eql
+          filters: [
+            {
+              type: "watermark"
+              attributes: ["foo.jpg", "0", "center"]
+              file: "foo.jpg"
+              opacity: 0
+              behavior: "center"
+            }
+          ]
+
       it "should detect watermark(foo.jpg, 0, tile)", ->
         a = parser.parse("filters:watermark(foo.jpg, 0, tile)")
 
