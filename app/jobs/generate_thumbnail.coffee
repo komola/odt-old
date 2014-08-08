@@ -152,11 +152,6 @@ module.exports = (job, done) =>
 
           return cb err
 
-    # cleanup
-    (cb) =>
-      files = _.values tmpFiles
-      async.eachSeries files, fs.unlink, cb
-
   ], (err) =>
     if err
       job.logger.error err.message, err
@@ -167,4 +162,6 @@ module.exports = (job, done) =>
     job.logger.profile "[##{job.id}] generate thumbnail"
     job.metrics.timing "thumbnail.generate.total", +new Date() - start
 
-    return done err
+    files = _.values tmpFiles
+    async.eachSeries files, fs.unlink, (err2) =>
+      return done err or err2
