@@ -74,6 +74,10 @@ handleRequest = (req, res) =>
           stream.pipe res
           stream.on "error", cb
 
+          req.on "close", =>
+            stream.abort()
+            return cb "closed_prematurely"
+
           stream.on "close", =>
             req.logger.info "successfully served image to client"
             return cb "served"
@@ -124,7 +128,7 @@ handleRequest = (req, res) =>
             return cb "served"
 
   ], (err) =>
-    if err in ["not_existing", "served"]
+    if err in ["not_existing", "served", "closed_prematurely"]
       err = null
 
     if err
