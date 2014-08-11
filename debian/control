@@ -1,0 +1,18 @@
+Source: odt
+Section: main
+Priority: extra
+Maintainer: PrismaBox <info@prismabox.de>
+Build-Depends: debhelper (>= 8.0.0), libv8-dev, libudev-dev, libssl1.0.0, libev-dev, libc6-dev, libstdc++-dev, g++, nodejs-legacy, git, curl, ca-certificates
+Standards-Version: 3.9.3
+Homepage: http://prismabox.de
+
+Package: odt
+Architecture: amd64
+Depends: ${shlibs:Depends}, ${misc:Depends}, redis-server, nodejs-legacy, graphicsmagick
+Description: On Demand Thumbnail generator
+
+Package: odt-worker
+Architecture: amd64
+Depends: ${shlibs:Depends}, ${misc:Depends},
+  graphicsmagick, redis-server, nodejs-legacy
+Description: On dempan Thumbnail generator worker

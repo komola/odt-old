@@ -1,0 +1,6 @@
+odt (1.0.0) unstable; urgency=low
+
+  [ PrismaBox ]
+  * Automatic build system complete
+
+ -- PrismaBox <info@prismabox.de>  Mon, 11 Aug 2014 13:16:40 +0000

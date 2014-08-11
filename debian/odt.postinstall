@@ -1,0 +1,4 @@
+mkdir -p /etc/odt
+if [ ! -f /etc/odt/config.json ]; then
+    echo "{\"instances\": 1, \"originalStorageType\": \"local\", \"originalStorageSourcePath\": \"/var/www\", \"thumbnailStorageType\": \"local\", \"thumbnailStorageSourcePath\": \"/opt/odt/storage/\"}" > /etc/odt/config.json
+fi
