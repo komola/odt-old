@@ -1,0 +1,6 @@
+app/* opt/odt/app/
+bin/* opt/odt/bin/
+node_modules/* opt/prismabox-receiver/node_modules/
+
+*.js opt/odt/
+*.json opt/odt/
