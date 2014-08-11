@@ -62,7 +62,7 @@ NAME="odt-worker.js"
 DIR="/opt/odt/"
 APP=${NAME}
 export NODE_ENV=${NODE_ENV:="production"}
-OPTIONS=""
+OPTIONS="-c /etc/odt/config.json"
 
 cd $DIR
 ################################################################################
@@ -89,17 +89,17 @@ export HOME=/root
 
 
 running() {
-  /opt/prismabox-receiver/node_modules/forever/bin/forever list 2>/dev/null | grep ${APP} 2>&1 >/dev/null
+  /opt/odt/node_modules/forever/bin/forever list 2>/dev/null | grep ${APP} 2>&1 >/dev/null
   return $?
 }
 
 start_server() {
-  /opt/prismabox-receiver/node_modules/forever/bin/forever start -a -l /var/log/odt/worker.fever -o /var/log/odt/worker.log -e /var/log/odt/worker.err ${APP} ${OPTIONS} 2>&1 >/dev/null
+  /opt/odt/node_modules/forever/bin/forever start -a -l /var/log/odt/worker.fever -o /var/log/odt/worker.log -e /var/log/odt/worker.err ${APP} ${OPTIONS} 2>&1 >/dev/null
   return $?
 }
 
 stop_server() {
-  /opt/prismabox-receiver/node_modules/forever/bin/forever stop ${APP} 2>&1 >/dev/null
+  /opt/odt/node_modules/forever/bin/forever stop ${APP} 2>&1 >/dev/null
   return $?
 }
 

@@ -1,0 +1,26 @@
+/var/log/odt/app.log /var/log/odt/app.fever /var/log/odt/app.err {
+  rotate 12
+  daily
+  compress
+  delaycompress
+  missingok
+  notifempty
+  sharedscripts
+  postrotate
+    /etc/init.d/odt restart
+  endscript
+}
+
+
+/var/log/odt/worker.log /var/log/odt/worker.fever /var/log/odt/worker.err {
+  rotate 12
+  daily
+  compress
+  delaycompress
+  missingok
+  notifempty
+  sharedscripts
+  postrotate
+    /etc/init.d/odt-worker restart
+  endscript
+}

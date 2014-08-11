@@ -1,0 +1,3 @@
+if [ ! -f /etc/odt/config.json ]; then
+    echo "{\"instances\": 1, \"originalStorageType\": \"local\", \"originalStorageSourcePath\": \"/opt/prismabox-receiver/storage/\", \"thumbnailStorageType\": \"local\", \"thumbnailStorageSourcePath\": \"/opt/odt/storage/\"}" > /etc/odt/config.json
+fi
