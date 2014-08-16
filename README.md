@@ -39,6 +39,8 @@ $ ./bin/odt --help
     --redis-host <host>                        Set redis host. Default: localhost
     --redis-port <port>                        Set redis port. Default: 6379
     --redis-auth <auth>                        Set redis authentication password
+    --secret <secret>                          Set a secret used for token generation
+    --enable-token-only                        Enable token only access
 ```
 
 ### Starting the worker

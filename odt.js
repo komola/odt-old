@@ -34,6 +34,9 @@ program
   .option('--redis-port <port>', 'Set redis port. Default: 6379')
   .option('--redis-auth <auth>', 'Set redis authentication password')
 
+  .option('--secret <secret>', 'Set a secret used for token generation')
+  .option('--enable-token-only', 'Enable token only access')
+
   .parse(process.argv);
 
 if (program.config) {
@@ -54,7 +57,9 @@ var options = {
   redisHost: program.redisHost,
   redisPort: program.redisPort,
   redisAuth: program.redisAuth,
-  storage: {}
+  storage: {},
+  enableTokenOnly: program.enableTokenOnly || false,
+  secret: program.secret || ""
 };
 
 if (program.originalStorageType === 'local') {
@@ -86,8 +91,6 @@ if (program.originalStorageType === 'swift') {
     url: program.originalStorageUrl
   };
 }
-
-
 
 if (program.thumbnailStorageType === 'local') {
   options.storage.thumbnail = {
