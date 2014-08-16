@@ -3,10 +3,26 @@ router = express.Router()
 async = require "async"
 _ = require "lodash"
 parser = require "../../lib/parametersParser"
+token = require "../../lib/token"
 
 handleRequest = (req, res) =>
   path = req.params.path
   additionalParameters = _.omit req.params, "path"
+
+  if req.params.token
+    params = _.omit req.params, "token"
+    requiredToken = token.create params, req.options.secret or ""
+
+    unless req.params.token is requiredToken
+      req.logger.info "tokens do not match!",
+        required: requiredToken
+        got: req.params.token
+
+      return res.status(404).send("Not found!")
+
+  # no token specified and enableTokenOnly option is set
+  else if req.options.enableTokenOnly
+    return res.status(404).send("Not found!")
 
   # parse the URL parameters for filters etc. and add them to the parameters
   if req.params.parameters
@@ -139,6 +155,7 @@ handleRequest = (req, res) =>
       else
         res.end()
 
+router.get "/:token/:width/:height/:parameters/:path", handleRequest
 router.get "/:width/:height/:parameters/:path", handleRequest
 router.get "/:width/:height/:path", handleRequest
 
