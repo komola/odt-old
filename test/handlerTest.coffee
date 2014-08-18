@@ -142,9 +142,45 @@ describe "Handler", ->
 
         handler.queue.client.flushdb done
 
+      describe "GET /v1/s/:token/:width/:height/:path", ->
+        it "should return 404 if tokens do not match", (done) ->
+          agent.get("http://localhost:5000/v1/s/kjaskdjaksdjasdkj/400/400/image.jpg").end (res) =>
+            res.status.should.equal 404
+            done()
+
+        it "should enqueue new job if tokens match", (done) ->
+          params =
+            width: 400
+            height: 400
+            path: "image.jpg"
+
+          token = require("../app/lib/token").create params, "testsecret"
+
+          agent.get("http://localhost:5000/v1/s/#{token}/400/400/image.jpg").end (res) =>
+            res.status.should.equal 200
+
+          fun = =>
+            queue = handler.queue
+            queue.inactive (err, jobs) =>
+              jobs.length.should.equal 1
+
+              require("kue").Job.get jobs[0], (err, job) =>
+                job.data.payload.width.should.equal "400"
+                job.data.payload.height.should.equal "400"
+                job.data.payload.path.should.equal "image.jpg"
+
+                done()
+
+          setTimeout fun, 200
+
+      it "should return 404 if no token is specified", (done) ->
+        agent.get("http://localhost:5000/v1/s/400/300/image.jpg").end (res) =>
+          res.status.should.equal 404
+          done()
+
       describe "GET /v1/:token/:width/:height/:parameters/:path", ->
         it "should return 404 if tokens do not match", (done) ->
-          agent.get("http://localhost:5000/v1/kjaskdjaksdjasdkj/400/400/filters:watermark(watermark.jpg,0,0,0)/image.jpg").end (res) =>
+          agent.get("http://localhost:5000/v1/s/kjaskdjaksdjasdkj/400/400/filters:watermark(watermark.jpg,0,0,0)/image.jpg").end (res) =>
             res.status.should.equal 404
             done()
 
@@ -157,7 +193,7 @@ describe "Handler", ->
 
           token = require("../app/lib/token").create params, "testsecret"
 
-          agent.get("http://localhost:5000/v1/#{token}/400/400/filters:watermark(watermark.jpg,0,0,0)/image.jpg").end (res) =>
+          agent.get("http://localhost:5000/v1/s/#{token}/400/400/filters:watermark(watermark.jpg,0,0,0)/image.jpg").end (res) =>
 
           fun = =>
             queue = handler.queue
@@ -180,6 +216,6 @@ describe "Handler", ->
           setTimeout fun, 200
 
       it "should return 404 if no token is specified", (done) ->
-        agent.get("http://localhost:5000/v1/400/300/filters:watermark(watermark.jpg,0,0,0)/image.jpg").end (res) =>
+        agent.get("http://localhost:5000/v1/s/400/300/filters:watermark(watermark.jpg,0,0,0)/image.jpg").end (res) =>
           res.status.should.equal 404
           done()

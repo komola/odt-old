@@ -155,7 +155,8 @@ handleRequest = (req, res) =>
       else
         res.end()
 
-router.get "/:token/:width/:height/:parameters/:path", handleRequest
+router.get "/s/:token/:width/:height/:parameters/:path", handleRequest
+router.get "/s/:token/:width/:height/:path", handleRequest
 router.get "/:width/:height/:parameters/:path", handleRequest
 router.get "/:width/:height/:path", handleRequest
 
