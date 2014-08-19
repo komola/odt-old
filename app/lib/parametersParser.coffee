@@ -16,12 +16,22 @@ ParametersParser =
     {type, attributes} = filter
 
     if type is "watermark"
+      behaviors = [
+        "tile"
+        "cover"
+        "center"
+        "north_east"
+        "south_east"
+        "north_west"
+        "south_west"
+      ]
+
       # watermark(filename, x, y, opacity)
       if attributes.length is 4
         [filter.file, filter.x, filter.y, filter.opacity] = attributes
 
       # watermark(filename, opacity, behavior)
-      else if attributes.length is 3 and attributes[2] in ["tile", "cover", "center"]
+      else if attributes.length is 3 and attributes[2] in behaviors
         [filter.file, filter.opacity, filter.behavior] = attributes
 
       else

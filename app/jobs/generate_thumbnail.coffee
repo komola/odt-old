@@ -62,7 +62,7 @@ module.exports = (job, done) =>
 
       execCommand = [
         "gm convert"
-        "-auto-orient"
+        # "-auto-orient"# comment out for now.
         "-size #{data.width}x#{data.height}"
         "-quality 100"
         "-resize #{data.width}x#{data.height}"
@@ -106,13 +106,27 @@ module.exports = (job, done) =>
               "-gravity center"
             ].join " "
 
+          else if filter.behavior in ["north_east", "south_east", "south_west", "north_west"]
+            position = switch filter.behavior
+              when "north_east" then "NorthEast"
+              when "south_east" then "SouthEast"
+              when "south_west" then "SouthWest"
+              when "north_west" then "NorthWest"
+
+            command.push [
+              "-compose Over"
+              "-gravity #{position}"
+              "-dissolve #{filter.opacity}"
+              "-resize #{Math.floor(data.width/4)}x#{Math.floor(data.height/4)}"
+            ].join " "
+
           else
             command.push [
               "-compose Over"
               "-gravity SouthEast"
               "-geometry +#{filter.x}+#{filter.y}"
               "-dissolve #{filter.opacity}"
-              "-resize #{data.width}x#{data.height}"
+              "-resize #{Math.floor(data.width/4)}x#{Math.floor(data.height/4)}"
             ].join " "
 
           command.push [

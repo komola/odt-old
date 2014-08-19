@@ -102,3 +102,4 @@ Valid parameters are:
 * `watermark(*filename*, *opacity*, tile)` tile the watermark over the image
 * `watermark(*filename*, *opacity*, cover)` scale the watermark to cover the whole image
 * `watermark(*filename*, *opacity*, center)` position the watermark in the center without resizing
+* `watermark(*filename*, *opacity*, [north_east, south_east, south_west, north_west])` position the watermark in the corner and resize to a quarter of the thumbnail size
