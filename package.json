@@ -1,7 +1,7 @@
 {
   "name": "odt",
   "description": "On Demand Thumbnail generator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "dependencies": {
     "coffee-script": "~1.7.1",
     "express": "~4.7.2",
