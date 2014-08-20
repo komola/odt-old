@@ -41,10 +41,18 @@ module.exports = (job, done) =>
 
           readStream.pipe writeStream
 
-          readStream.on "error", done
+          returned = false
+
+          readStream.on "error", (err) =>
+            job.logger.error err
+            return if returned
+            returned = true
+            return done err
 
           writeStream.on "close", (err) =>
             job.logger.profile "[##{job.id}] read file #{filename}"
+            return if returned
+            returned = true
             return done err
 
       async.each files, download, (err) =>
