@@ -183,6 +183,9 @@ module.exports = (job, done) =>
     unless err
       job.metrics.increment "thumbnail.generate.succeeded"
 
+    if err?.timeout
+      req.metrics.increment "thumbnail.generate.failure.timeout"
+
     job.logger.profile "[##{job.id}] generate thumbnail"
     job.metrics.timing "thumbnail.generate.total", +new Date() - start
 
