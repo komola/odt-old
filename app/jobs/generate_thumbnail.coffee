@@ -41,6 +41,8 @@ module.exports = (job, done) =>
 
           readStream.pipe writeStream
 
+          readStream.on "error", done
+
           writeStream.on "close", (err) =>
             job.logger.profile "[##{job.id}] read file #{filename}"
             return done err
