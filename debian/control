@@ -13,6 +13,5 @@ Description: On Demand Thumbnail generator
 
 Package: odt-worker
 Architecture: amd64
-Depends: ${shlibs:Depends}, ${misc:Depends},
-  graphicsmagick, redis-server, nodejs-legacy
-Description: On dempan Thumbnail generator worker
+Depends: ${shlibs:Depends}, ${misc:Depends}, graphicsmagick, redis-server, nodejs-legacy
+Description: On Demand Thumbnail generator worker
