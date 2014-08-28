@@ -24,6 +24,8 @@ ParametersParser =
         "south_east"
         "north_west"
         "south_west"
+        "top"
+        "bottom"
       ]
 
       # watermark(filename, x, y, opacity)
