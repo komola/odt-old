@@ -130,6 +130,18 @@ module.exports = (job, done) =>
               "-resize #{Math.floor(data.width/4)}x#{Math.floor(data.height/4)}"
             ].join " "
 
+          else if filter.behavior in ["top", "bottom"]
+            position = switch filter.behavior
+              when "top" then "NorthWest"
+              when "bottom" then "SouthWest"
+
+            command.push [
+              "-compose Over"
+              "-gravity #{position}"
+              "-dissolve #{filter.opacity}"
+              "-resize #{Math.floor(data.width}"
+            ].join " "
+
           else
             command.push [
               "-compose Over"
