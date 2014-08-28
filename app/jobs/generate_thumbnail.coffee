@@ -139,7 +139,7 @@ module.exports = (job, done) =>
               "-compose Over"
               "-gravity #{position}"
               "-dissolve #{filter.opacity}"
-              "-resize #{Math.floor(data.width}"
+              "-resize #{Math.floor(data.width)}"
             ].join " "
 
           else
